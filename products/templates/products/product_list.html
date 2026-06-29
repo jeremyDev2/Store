@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Каталог товарів{% endblock %}
+
+{% block content %}
+<h1>Каталог</h1>
+
+<form method="get">
+    <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Пошук...">
+    <button type="submit">Знайти</button>
+</form>
+
+<ul>
+    {% for category in categories %}
+        <li><a href="?category={{ category.slug }}">{{ category.name }}</a></li>
+    {% endfor %}
+</ul>
+
+<!-- Сортировка -->
+<a href="?sort=price">Дешевші спочатку</a>
+<a href="?sort=-price">Дорожчі спочатку</a>
+<a href="?sort=-created_at">Новинки</a>
+
+<div>
+    {% for product in products %}
+        <div>
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            <h2>{{ product.name }}</h2>
+            <p>{{ product.price }} грн</p>
+            <a href="{% url 'products:product_detail' product.slug %}">Детальніше</a>
+        </div>
+    {% empty %}
+        <p>Товари не знайдені</p>
+    {% endfor %}
+</div>
+
+{% if page_obj.has_other_pages %}
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">← Назад</a>
+    {% endif %}
+
+    <span>Сторінка {{ page_obj.number }} з {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Вперед →</a>
+    {% endif %}
+{% endif %}
+{% endblock %}
