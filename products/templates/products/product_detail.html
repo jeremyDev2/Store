@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<div>
+    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+    <h1>{{ product.name }}</h1>
+    <p>{{ product.price }} грн</p>
+    <p>{{ product.description }}</p>
+    <p>В наявності: {{ product.stock }} шт.</p>
+
+    <form method="post" action="{% url 'cart:add' product.id %}">
+        {% csrf_token %}
+        <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}">
+        <button type="submit">Додати в кошик</button>
+    </form>
+</div>
+{% endblock %}
