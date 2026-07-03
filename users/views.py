@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm, AuthenticationForm
-from django.contrib.auth.decorators import login_required
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from orders.models import Order
@@ -45,7 +44,6 @@ class LogoutView(View):
         logout(request)
         return redirect("products:product_list")
 
-@login_required
 class ProfileView(LoginRequiredMixin, View):
 
     def get(self, request):
@@ -53,7 +51,6 @@ class ProfileView(LoginRequiredMixin, View):
         orders = Order.objects.filter(user=request.user).order_by('-created_at')
         return render(request, "users/profile.html", {"orders": orders})
 
-@login_required
 class ProfileEditView(LoginRequiredMixin, View):
 
     def get(self, request):
