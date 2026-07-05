@@ -1,0 +1,151 @@
+/* ── AUTH (login, register, profile_edit) ── */
+.auth-page {
+    min-height: calc(100vh - 64px - 60px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+.auth-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 40px;
+    width: 100%;
+    max-width: 440px;
+}
+.auth-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; }
+.auth-sub { color: #666; font-size: 14px; margin-bottom: 28px; }
+.auth-sub a { color: #e63012; font-weight: 500; }
+
+.auth-form { display: flex; flex-direction: column; gap: 16px; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-size: 13px; font-weight: 600; color: #333; }
+.field input,
+.field select,
+.field textarea {
+    padding: 10px 12px;
+    border: 1px solid #d0d0d0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    transition: border-color .15s;
+    background: #fff;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus { outline: none; border-color: #e63012; }
+.field-errors { list-style: none; }
+.field-errors li { font-size: 12px; color: #e63012; }
+.field-hint { font-size: 12px; color: #888; line-height: 1.4; }
+
+.btn-primary {
+    background: #e63012;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s;
+}
+.btn-primary:hover { background: #c9280f; }
+.btn-full { width: 100%; }
+
+/* ── PROFILE ── */
+.profile-page { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    gap: 16px;
+}
+.profile-header h1 { font-size: 1.6rem; font-weight: 700; }
+.profile-email { color: #666; font-size: 14px; margin-top: 2px; }
+
+.btn-outline {
+    border: 1px solid #d0d0d0;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    transition: border-color .15s, color .15s;
+    white-space: nowrap;
+}
+.btn-outline:hover { border-color: #e63012; color: #e63012; }
+
+.orders-section h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; }
+.orders-list { display: flex; flex-direction: column; gap: 12px; }
+
+.order-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden; }
+.order-card-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid #f0f0f0;
+    background: #fafafa;
+}
+.order-id { font-weight: 700; font-size: 14px; }
+.order-date { color: #888; font-size: 13px; margin-left: auto; }
+
+.order-status { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+.status-pending    { background: #fff3cd; color: #856404; }
+.status-processing { background: #cce5ff; color: #004085; }
+.status-shipped    { background: #d4edda; color: #155724; }
+.status-delivered  { background: #d1ecf1; color: #0c5460; }
+.status-cancelled  { background: #f8d7da; color: #721c24; }
+
+.order-items { padding: 12px 18px; display: flex; flex-direction: column; gap: 6px; }
+.order-item { display: flex; gap: 12px; font-size: 14px; }
+.item-name { flex: 1; color: #333; }
+.item-qty { color: #888; }
+.item-price { font-weight: 600; }
+
+.order-card-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 18px;
+    border-top: 1px solid #f0f0f0;
+    font-size: 13px;
+    color: #666;
+}
+.order-card-foot strong { color: #1a1a1a; }
+
+.empty-state { text-align: center; padding: 60px 20px; color: #888; }
+.empty-icon { font-size: 3rem; display: block; margin-bottom: 12px; }
+.empty-state p { margin-bottom: 20px; }
+
+/* ── PROFILE EDIT ── */
+.edit-page {
+    min-height: calc(100vh - 64px - 60px);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 20px;
+}
+.edit-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 40px;
+    width: 100%;
+    max-width: 480px;
+}
+.edit-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+.edit-header h1 { font-size: 1.4rem; font-weight: 700; }
+.back-link { font-size: 13px; color: #888; transition: color .15s; }
+.back-link:hover { color: #e63012; }
+
+.form-actions { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+.btn-cancel { font-size: 13px; color: #888; transition: color .15s; }
+.btn-cancel:hover { color: #e63012; }
+
+/* ── STAR RATING ── */
+.star-row { display: flex; gap: 4px; width: fit-content; }
+.star { font-size: 2rem; color: #ddd; cursor: pointer; transition: color .1s; }
