@@ -12,6 +12,7 @@ db.sqlite3-journal
 /staticfiles/
 .env
 .env.*
+!.env.example
 build/
 dist/
 *.egg-info/
