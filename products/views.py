@@ -51,4 +51,8 @@ class ProductDetailView(DetailView):
     model = Product
     template_name = "products/product_detail.html"
     context_object_name = "product"
-    # Django automatically looks up an object by its URL slug (<slug:slug>)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['reviews'] = self.object.reviews.select_related('user').order_by('-created_at')
+        return context
