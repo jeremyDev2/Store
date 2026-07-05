@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views import View
@@ -7,6 +7,10 @@ from orders.models import OrderItem
 from .models import Review
 
 class AddReviewView(View):
+
+    def get(self, request, product_id):
+        product = get_object_or_404(Product, id=product_id)
+        return render(request, 'reviews/add_review.html', {'product': product})
 
     def post(self, request, product_id):
         
