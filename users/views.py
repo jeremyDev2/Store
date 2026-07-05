@@ -1,9 +1,17 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.forms import UserChangeForm, UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django import forms
+from django.contrib.auth.models import User
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from orders.models import Order
+
+
+class ProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email')
 
 class RegisterView(View):
 
@@ -54,12 +62,11 @@ class ProfileView(LoginRequiredMixin, View):
 class ProfileEditView(LoginRequiredMixin, View):
 
     def get(self, request):
-        #redacting form with active orders
-        form = UserChangeForm(instance=request.user)
+        form = ProfileEditForm(instance=request.user)
         return render(request, 'users/profile_edit.html', {"form": form})
 
     def post(self, request):
-        form = UserChangeForm(request.POST, instance=request.user)
+        form = ProfileEditForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
             return redirect('users:profile')
