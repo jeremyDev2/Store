@@ -12,6 +12,7 @@ services:
     build: .
     volumes:
       - .:/app
+      - venv_volume:/app/.venv
       - static_volume:/app/staticfiles
       - media_volume:/app/media
     env_file:
@@ -32,5 +33,6 @@ services:
 
 volumes:
   postgres_data:
+  venv_volume:
   static_volume:
   media_volume:
