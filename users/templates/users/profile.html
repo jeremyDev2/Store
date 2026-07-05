@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profile — Store{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/users.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+
+    <div class="profile-header">
+        <div>
+            <h1>{{ request.user.username }}</h1>
+            <p class="profile-email">{{ request.user.email }}</p>
+        </div>
+        <a href="{% url 'users:profile_edit' %}" class="btn-outline">Edit profile</a>
+    </div>
+
+    <section class="orders-section">
+        <h2>Order history</h2>
+
+        {% if orders %}
+            <div class="orders-list">
+                {% for order in orders %}
+                <div class="order-card">
+                    <div class="order-card-head">
+                        <span class="order-id">Order #{{ order.id }}</span>
+                        <span class="order-status status-{{ order.status }}">{{ order.get_status_display }}</span>
+                        <span class="order-date">{{ order.created_at|date:"d M Y" }}</span>
+                    </div>
+                    <div class="order-items">
+                        {% for item in order.items.all %}
+                        <div class="order-item">
+                            <span class="item-name">{{ item.product.name }}</span>
+                            <span class="item-qty">× {{ item.quantity }}</span>
+                            <span class="item-price">${{ item.price }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="order-card-foot">
+                        <span>Total: <strong>${{ order.total_price }}</strong></span>
+                        <span class="order-addr">{{ order.shipping_address|truncatechars:50 }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <span class="empty-icon">📦</span>
+                <p>No orders yet</p>
+                <a href="{% url 'products:product_list' %}" class="btn-primary">Browse products</a>
+            </div>
+        {% endif %}
+    </section>
+</div>
+
+{% endblock %}
