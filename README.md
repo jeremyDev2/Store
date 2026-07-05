@@ -1,4 +1,6 @@
-# XStore: Full-Stack E-Commerce Platform
+# 🖥️ XStore — Pre-built Gaming PCs
+
+Full-stack e-commerce built with Django. REST API + GraphQL, JWT auth, Docker production setup with Nginx & Gunicorn.
 
 🌐 **Live:** https://store-fxui.onrender.com
 
@@ -7,76 +9,204 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue)
 ![Docker](https://img.shields.io/badge/Docker-Compose-informational)
 
-## Overview
+---
 
-An educational Django project demonstrating a complete online storefront for pre-built gaming PCs and smartphones. The application provides a server-rendered web interface and a REST API, both operating against shared domain models.
+## Tech Stack
 
-## Core Architecture
+| Layer | Technology |
+|---|---|
+| Backend | Django 6, Django REST Framework |
+| Auth | JWT via `djangorestframework-simplejwt` |
+| GraphQL | `graphene-django`, GraphiQL |
+| Database | PostgreSQL 16 |
+| Infrastructure | Docker Compose, Gunicorn, Nginx |
+| Static files | `whitenoise` (production) |
+| Package manager | `uv` |
+| API docs | `drf-spectacular` (Swagger / OpenAPI) |
+| Testing | `pytest-django` |
 
-The platform implements two distinct access patterns:
+---
 
-- **Web storefront** using session-based authentication with server-rendered templates
-- **REST API** utilizing JWT authentication for programmatic access
-- **GraphQL endpoint** for flexible data queries with filtering support
+## Project Structure
 
-## Key Technical Highlights
+```
+Store/
+│
+├── config/                  # project config
+│   ├── settings.py
+│   ├── urls.py
+│   ├── api_urls.py          # REST API routes
+│   └── ql_schema.py         # GraphQL root schema
+│
+├── products/                # catalog app
+├── orders/                  # cart + checkout
+├── reviews/                 # product reviews
+├── users/                   # auth + profile
+│
+├── static/                  # source CSS files
+│   └── css/
+│       ├── base.css
+│       ├── products.css
+│       ├── orders.css
+│       └── users.css
+│
+├── templates/               # HTML templates
+│   └── base.html
+│
+├── tests/                   # pytest test suite
+│   ├── test_products.py
+│   ├── test_cart.py
+│   ├── test_orders.py
+│   └── test_api.py
+│
+├── Dockerfile
+├── docker-compose.yml
+├── entrypoint.sh
+├── nginx.conf
+└── .env                     # not committed — see .env.example
+```
 
-**Stack:**
-- Django 6 with Python 3.13
-- PostgreSQL 16 for persistence
-- Docker Compose with Nginx + Gunicorn for local production setup
-- Django REST Framework with JWT token management
-- GraphQL via `graphene-django` with GraphiQL interface
-- Whitenoise for static file serving in production
+---
 
-**Notable Features:**
-- Transaction-safe checkout with atomic database operations to prevent overselling
-- Price snapshots captured at order time — stored independently of current product price
-- Session-based shopping cart requiring no authentication to browse
-- Review system restricted to verified buyers — users can only review products they have purchased
-- Modular CSS architecture with per-app stylesheets served via collectstatic pipeline
+## Quick Start
 
-## Data Integrity & Business Logic
-
-The checkout process operates within atomic transactions, ensuring stock is decremented and order items are created as a single unit of work. If any step fails, the entire operation rolls back. Product prices are saved directly to `OrderItem` at the moment of purchase, making order history immune to future price changes.
-
-## API
-
-The REST API is documented interactively at `/api/docs/` via Swagger UI. Public endpoints cover the product catalog and registration. Order management and profile access require JWT authentication passed as a Bearer token.
-
-The GraphQL endpoint at `/graphql/` exposes products and categories with full filtering support — by search term, category slug, and price range.
-
-## Quality Assurance
-
-The project includes a pytest test suite covering catalog browsing, cart operations, checkout flow, and JWT authentication. Tests use dedicated fixtures and run against an isolated test database.
-
-## Local Setup
+### 1. Clone & configure environment
 
 ```bash
 git clone https://github.com/your-username/store.git
 cd store
 cp .env.example .env   # fill in your values
+```
+
+### 2. Environment variables
+
+| Variable | Example | Description |
+|---|---|---|
+| `SECRET_KEY` | `django-insecure-...` | Django secret key |
+| `DEBUG` | `False` | Set `True` in development only |
+| `DB_NAME` | `store` | PostgreSQL database name |
+| `DB_USER` | `store` | PostgreSQL user |
+| `DB_PASSWORD` | `store` | PostgreSQL password |
+| `DB_HOST` | `db` | Service name from docker-compose |
+| `DB_PORT` | `5432` | PostgreSQL port |
+| `DATABASE_URL` | `postgresql://...` | Overrides DB\_\* vars (used on Render) |
+| `ALLOWED_HOSTS` | `localhost,yourdomain.com` | Comma-separated allowed hosts |
+
+### 3. Run with Docker
+
+```bash
 docker compose up --build
 ```
 
-On first start, `entrypoint.sh` automatically runs migrations and collects static files. The application is available at `http://localhost`.
+On first start `entrypoint.sh` runs `migrate` and `collectstatic` automatically.
 
-**Seed sample data:**
+App available at `http://localhost` — served by Nginx → Gunicorn.
+
+### 4. Seed sample products
+
 ```bash
 docker compose exec web .venv/bin/python manage.py seed_products
-docker compose exec web .venv/bin/python manage.py createsuperuser
 ```
 
-**Environment variables:**
+### 5. Useful commands
 
-| Variable | Description |
+```bash
+# create admin account for /admin/ panel
+docker compose exec web .venv/bin/python manage.py createsuperuser
+
+# run tests
+docker compose exec web .venv/bin/pytest
+
+# lint + type check
+docker compose exec web .venv/bin/flake8 .
+docker compose exec web .venv/bin/mypy .
+```
+
+---
+
+## Deploy on Render
+
+1. Create a **PostgreSQL** database on Render → copy **Internal Database URL**
+2. Create a **Web Service** → connect GitHub repo → runtime **Docker**
+3. Set environment variables:
+
+| Variable | Value |
 |---|---|
-| `SECRET_KEY` | Django secret key |
-| `DEBUG` | `True` for development, `False` for production |
-| `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST` | PostgreSQL credentials |
-| `DATABASE_URL` | Overrides individual DB vars — used on Render |
-| `ALLOWED_HOSTS` | Comma-separated list of allowed hostnames |
+| `SECRET_KEY` | your secret key |
+| `DEBUG` | `False` |
+| `DATABASE_URL` | Internal Database URL from Render PostgreSQL |
+| `ALLOWED_HOSTS` | `your-app.onrender.com` |
 
-## Deployment
+4. Pre-Deploy Command: `.venv/bin/python manage.py migrate`
+5. Deploy — static files are served by `whitenoise`, no Nginx needed.
 
-The project is deployed on Render using the Docker runtime. Static files are served by Whitenoise — no separate Nginx required in the cloud environment. The database runs as a managed Render PostgreSQL instance connected via `DATABASE_URL`.
+---
+
+## REST API
+
+Base URL: `/api/` — full interactive docs at `/api/docs/`
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `POST` | `/api/token/` | — | Obtain JWT access + refresh token |
+| `POST` | `/api/token/refresh/` | — | Refresh access token |
+| `POST` | `/api/users/register/` | — | Register new user |
+| `GET/PUT` | `/api/users/profile/` | 🔐 JWT | Get / update profile |
+| `GET` | `/api/products/` | — | Product list — search, filter, sort |
+| `GET` | `/api/products/{id}/` | — | Product detail |
+| `GET` | `/api/categories/` | — | Category list |
+| `GET` | `/api/orders/` | 🔐 JWT | User's orders |
+
+### JWT usage example
+
+```bash
+# 1. get token
+curl -X POST https://store-fxui.onrender.com/api/token/ \
+  -H "Content-Type: application/json" \
+  -d '{"username": "john", "password": "secret"}'
+
+# 2. use token in requests
+curl https://store-fxui.onrender.com/api/orders/ \
+  -H "Authorization: Bearer <access_token>"
+```
+
+---
+
+## GraphQL
+
+Endpoint: `/graphql/` — interactive GraphiQL IDE available in browser.
+
+```graphql
+# product list with filters
+query {
+  allProducts(search: "RTX", minPrice: 40000) {
+    id
+    name
+    price
+    category { name }
+  }
+}
+
+# single product by slug
+query {
+  product(slug: "gaming-pc-rtx-5090-core-ultra9-285k-64gb") {
+    name
+    price
+    stock
+    category { name slug }
+  }
+}
+```
+
+---
+
+## Available URLs
+
+| URL | Description |
+|---|---|
+| `http://localhost/products/` | Product catalog |
+| `http://localhost/orders/cart/` | Cart |
+| `http://localhost/users/login/` | Login |
+| `http://localhost/admin/` | Django admin panel |
+| `http://localhost/api/docs/` | Swagger API documentation |
+| `http://localhost/graphql/` | GraphiQL interface |
