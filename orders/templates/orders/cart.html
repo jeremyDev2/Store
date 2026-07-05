@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Cart{% endblock %}
+
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/orders.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1 class="cart-title">Cart</h1>
+
+{% if cart|length > 0 %}
+<div class="cart-layout">
+
+    <div class="cart-items">
+        {% for item in cart %}
+        <div class="cart-item">
+            {% if item.product.image %}
+                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="cart-item-img">
+            {% else %}
+                <div class="cart-item-img-placeholder">🖥️</div>
+            {% endif %}
+
+            <div>
+                <div class="cart-item-name">
+                    <a href="{% url 'products:product_detail' item.product.slug %}">{{ item.product.name }}</a>
+                </div>
+                <div class="cart-item-price">{{ item.price }} UAH / each</div>
+            </div>
+
+            <div class="cart-item-actions">
+                <div class="cart-item-total">{{ item.total_price }} UAH</div>
+
+                <form method="post" action="{% url 'orders:cart_update' item.product.id %}" class="qty-form">
+                    {% csrf_token %}
+                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}" class="qty-input">
+                    <button type="submit" class="btn-update">Update</button>
+                </form>
+
+                <form method="post" action="{% url 'orders:cart_remove' item.product.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-remove">✕ Delete</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="cart-summary">
+        <div class="summary-title">Final order</div>
+
+        <div class="summary-row">
+            <span>Products ({{ cart|length }} each.)</span>
+            <span>{{ cart.get_total_price }} UAH</span>
+        </div>
+        <div class="summary-row">
+            <span>Delivary</span>
+            <span style="color:#1a7f37">Free</span>
+        </div>
+
+        <div class="summary-total">
+            <span>Total</span>
+            <span class="price">{{ cart.get_total_price }} UAH</span>
+        </div>
+
+        <a href="{% url 'orders:checkout' %}" class="checkout-btn">Place an order →</a>
+    </div>
+
+</div>
+
+{% else %}
+<div class="cart-empty">
+    <div class="icon">🛒</div>
+    <h2>Cart empty</h2>
+    <p>Add items for the catalog</p>
+    <a href="{% url 'products:product_list' %}" class="btn btn-primary">Go to catalog</a>
+</div>
+{% endif %}
+
+{% endblock %}
