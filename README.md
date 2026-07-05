@@ -205,8 +205,15 @@ query {
 | URL | Description |
 |---|---|
 | `http://localhost/products/` | Product catalog |
+| `http://localhost/products/<slug>/` | Product detail page |
 | `http://localhost/orders/cart/` | Cart |
+| `http://localhost/orders/checkout/` | Checkout |
+| `http://localhost/reviews/add/<id>/` | Add product review |
+| `http://localhost/users/register/` | Registration |
 | `http://localhost/users/login/` | Login |
+| `http://localhost/users/logout/` | Logout |
+| `http://localhost/users/profile/` | User profile & order history |
+| `http://localhost/users/profile/edit/` | Edit profile |
 | `http://localhost/admin/` | Django admin panel |
 | `http://localhost/api/docs/` | Swagger API documentation |
 | `http://localhost/graphql/` | GraphiQL interface |
