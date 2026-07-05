@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Review — {{ product.name }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/users.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="edit-page">
+    <div class="edit-card">
+
+        <div class="edit-header">
+            <h1>Write a review</h1>
+            <a href="{% url 'products:product_detail' product.slug %}" class="back-link">← Back to product</a>
+        </div>
+
+        <p style="font-size:14px; color:#666; margin-bottom:24px;">{{ product.name }}</p>
+
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+
+            <div class="field">
+                <label>Rating</label>
+                <div class="star-row" id="star-row">
+                    {% for i in "12345" %}
+                    <span class="star" data-value="{{ i }}">★</span>
+                    {% endfor %}
+                </div>
+                <input type="hidden" name="rating" id="rating-input" value="5">
+            </div>
+
+            <div class="field">
+                <label for="comment">Comment</label>
+                <textarea id="comment" name="comment" rows="5" placeholder="Share your experience with this product…" required></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Submit review</button>
+                <a href="{% url 'products:product_detail' product.slug %}" class="btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+const stars = document.querySelectorAll('#star-row .star');
+const input = document.getElementById('rating-input');
+
+function highlight(value) {
+    stars.forEach(s => {
+        s.style.color = parseInt(s.dataset.value)<=value ? '#f59e0b' : '#ddd';
+    });
+}
+
+highlight(5);
+
+stars.forEach(star => {
+    star.addEventListener('click',() => {
+        input.value = star.dataset.value;
+        highlight(parseInt(star.dataset.value));
+    });
+    star.addEventListener('mouseenter',() => highlight(parseInt(star.dataset.value)));
+    star.addEventListener('mouseleave', () => highlight(parseInt(input.value)));
+});
+</script>
+{% endblock %}
