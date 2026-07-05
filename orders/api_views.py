@@ -5,6 +5,7 @@ from .serializers import OrderSerializer
 class OrderViewSet(viewsets.ModelViewSet):
     #ModelViewSet - full CRUD(not like read-only in ProductViewSet)
     serializer_class = OrderSerializer
+    permission_classes = [permissions.IsAuthenticated]
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['created_at','status'] # ?ordering=-created_at
     filterset_fields = ['status'] # ?status=pending
