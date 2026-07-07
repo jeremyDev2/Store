@@ -19,7 +19,7 @@ if p and not User.objects.filter(username=u).exists():
 "
 
 # seed products if none exist
-.venv/bin/python manage.py seed_products --reset
+.venv/bin/python manage.py seed_products
 
 # start gunicorn
 exec .venv/bin/gunicorn config.wsgi:application --bind 0.0.0.0:8000
