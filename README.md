@@ -2,7 +2,7 @@
 
 Full-stack e-commerce built with Django. REST API + GraphQL, JWT auth, Docker production setup with Nginx & Gunicorn.
 
-🌐 **Live:** https://store-fxui.onrender.com
+🌐 **Live:** https://store-fxui.onrender.com/products
 
 ![Python](https://img.shields.io/badge/Python-3.13-blue)
 ![Django](https://img.shields.io/badge/Django-6-green)
