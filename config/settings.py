@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary_storage',
     'products',
     'orders',
     'users',
@@ -146,3 +147,10 @@ REST_FRAMEWORK = {
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@store.com')
 #SMTP placeholder
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': config('CLOUDINARY_API_KEY'),
+    'API_SECRET': config('CLOUDINARY_API_SECRET'),
+}
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
