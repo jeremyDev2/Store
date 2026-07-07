@@ -226,7 +226,13 @@ PRODUCTS = [
 class Command(BaseCommand):
     help = "Seed database with sample products"
 
+    def add_arguments(self,parser):
+        parser.add_argument('--reset',action='store_true',help='Delete existing products before seeding')
+
     def handle(self, *args, **kwargs):
+        if kwargs.get('reset'):
+            Product.objects.all().delete()
+            self.stdout.write("Existing products deleted.")
         gaming_category, _ = Category.objects.get_or_create(
             slug="gaming-pcs",
             defaults={"name": "Gaming PCs"},
