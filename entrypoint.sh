@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
+PORT="${PORT:-8000}"
+
 echo "Waiting for database..."
 until python -c "
 import os, sys
@@ -41,4 +43,4 @@ if p and not User.objects.filter(username=u).exists():
 python manage.py seed_products
 
 # start gunicorn
-exec gunicorn config.wsgi:application --bind 0.0.0.0:8000
+exec gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
