@@ -37,7 +37,7 @@ def auth_client(client, user):
     client.login(username='testuser', password='testpass123')
     return client
 
-
+#redirect anonymous users to the login page
 @pytest.mark.django_db
 def test_checkout_requires_login(client, product):
     # add to cart first
@@ -50,7 +50,7 @@ def test_checkout_requires_login(client, product):
     assert response.status_code == 302
     assert '/login' in response['Location']
 
-
+#load the checkout page
 @pytest.mark.django_db
 def test_checkout_page_loads(auth_client, product):
     # add to cart
@@ -60,7 +60,7 @@ def test_checkout_page_loads(auth_client, product):
     response = auth_client.get(url)
     assert response.status_code == 200
 
-
+#create an order in the database
 @pytest.mark.django_db
 def test_order_created_on_checkout(auth_client, user, product):
     # add to cart
@@ -80,7 +80,7 @@ def test_order_created_on_checkout(auth_client, user, product):
     # order exists in DB and belongs to the user
     assert Order.objects.filter(user=user).exists()
 
-
+#create an OrderItem with the correct quantity
 @pytest.mark.django_db
 def test_order_items_created(auth_client, user, product):
     auth_client.post(reverse('orders:cart_add'), {'product_id': product.id, 'quantity': 2})
@@ -98,7 +98,7 @@ def test_order_items_created(auth_client, user, product):
     item = OrderItem.objects.get(order=order, product=product)
     assert item.quantity == 2
 
-
+#clear the shopping cart after checkout
 @pytest.mark.django_db
 def test_cart_cleared_after_checkout(auth_client, product):
     auth_client.post(reverse('orders:cart_add'), {'product_id': product.id, 'quantity': 1})
@@ -116,7 +116,7 @@ def test_cart_cleared_after_checkout(auth_client, product):
     cart = auth_client.session.get('cart', {})
     assert cart == {}
 
-
+#set the default order status to “pending”
 @pytest.mark.django_db
 def test_order_default_status_is_pending(auth_client, user, product):
     auth_client.post(reverse('orders:cart_add'), {'product_id': product.id, 'quantity': 1})
@@ -142,9 +142,3 @@ def test_order_default_status_is_pending(auth_client, user, product):
     order = Order.objects.get(user=user)
     assert order.status == 'pending'
 
-#redirect anonymous users to the login page
-#load the checkout page
-#create an order in the database
-#create an OrderItem with the correct quantity
-#clear the shopping cart after checkout
-#set the default order status to “pending”
