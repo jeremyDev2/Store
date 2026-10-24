@@ -1,13 +1,32 @@
 #!/bin/sh
+set -e
+
+echo "Waiting for database..."
+until python -c "
+import os, sys
+try:
+    import psycopg
+    dsn = os.environ.get('DATABASE_URL') or 'postgresql://store:store@db:5432/store'
+    conn = psycopg.connect(dsn)
+    conn.close()
+    sys.exit(0)
+except Exception as e:
+    print(e, flush=True)
+    sys.exit(1)
+"; do
+  echo "Database not ready, sleeping..."
+  sleep 2
+done
+echo "Database is ready!"
 
 # apply migrations
-.venv/bin/python manage.py migrate
+python manage.py migrate
 
 # collect static files
-.venv/bin/python manage.py collectstatic --noinput
+python manage.py collectstatic --noinput
 
 # create superuser from env vars if not exists
-.venv/bin/python manage.py shell -c "
+python manage.py shell -c "
 from django.contrib.auth import get_user_model
 User = get_user_model()
 import os
@@ -19,7 +38,7 @@ if p and not User.objects.filter(username=u).exists():
 "
 
 # seed products if none exist
-.venv/bin/python manage.py seed_products
+python manage.py seed_products
 
 # start gunicorn
-exec .venv/bin/gunicorn config.wsgi:application --bind 0.0.0.0:8000
+exec gunicorn config.wsgi:application --bind 0.0.0.0:8000
