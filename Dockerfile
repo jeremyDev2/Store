@@ -4,8 +4,11 @@ RUN apt-get update && apt-get install -y libpq-dev && rm -rf /var/lib/apt/lists/
 
 WORKDIR /app
 
+ENV UV_PROJECT_ENVIRONMENT=/opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
 COPY pyproject.toml uv.lock ./
-RUN pip install uv && uv sync
+RUN pip install uv && uv sync --frozen
 
 COPY . .
 
