@@ -3,26 +3,13 @@ set -e
 
 PORT="${PORT:-8000}"
 
-echo "Waiting for database..."
-until python -c "
-import os, sys
-try:
-    import psycopg
-    dsn = os.environ.get('DATABASE_URL') or 'postgresql://store:store@db:5432/store'
-    conn = psycopg.connect(dsn)
-    conn.close()
-    sys.exit(0)
-except Exception as e:
-    print(e, flush=True)
-    sys.exit(1)
-"; do
-  echo "Database not ready, sleeping..."
-  sleep 2
-done
-echo "Database is ready!"
-
-# apply migrations
-python manage.py migrate
+# Try to apply migrations but don't hang forever if DB is unreachable
+echo "Running migrations..."
+python manage.py migrate || {
+  echo "Migrate failed, retrying in 5s..."
+  sleep 5
+  python manage.py migrate
+}
 
 # collect static files
 python manage.py collectstatic --noinput
@@ -37,10 +24,10 @@ p = os.environ.get('DJANGO_SUPERUSER_PASSWORD', 'admin')
 e = os.environ.get('DJANGO_SUPERUSER_EMAIL', '')
 if p and not User.objects.filter(username=u).exists():
     User.objects.create_superuser(u, e, p)
-"
+" || true
 
 # seed products if none exist
-python manage.py seed_products
+python manage.py seed_products || true
 
 # start gunicorn
 exec gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
