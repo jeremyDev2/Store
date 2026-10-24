@@ -12,7 +12,6 @@ services:
     build: .
     volumes:
       - .:/app
-      - venv_volume:/app/.venv
       - static_volume:/app/staticfiles
       - media_volume:/app/media
     env_file:
