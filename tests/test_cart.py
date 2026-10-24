@@ -19,7 +19,7 @@ def product(db, category):
         description='Gaming card'
     )
 
-
+#Adding an item to the cart
 @pytest.mark.django_db
 def test_cart_add(client, product):
     # added product to cart
@@ -31,6 +31,7 @@ def test_cart_add(client, product):
     assert str(product.id) in cart
 
 
+#Correctly saving the quantity
 @pytest.mark.django_db
 def test_cart_add_quantity(client, product):
     # the quantity is stored correctly
@@ -39,7 +40,7 @@ def test_cart_add_quantity(client, product):
     cart = client.session.get('cart', {})
     assert cart[str(product.id)]['quantity'] == 2
 
-
+#Removing an item from the cart
 @pytest.mark.django_db
 def test_cart_remove(client, product):
     # first - create
@@ -51,7 +52,7 @@ def test_cart_remove(client, product):
     cart = client.session.get('cart', {})
     assert str(product.id) not in cart
 
-
+#Updating the quantity
 @pytest.mark.django_db
 def test_cart_update(client, product):
     # add 1, updating to 3
@@ -64,6 +65,7 @@ def test_cart_update(client, product):
     assert cart[str(product.id)]['quantity'] == 3
 
 
+#The cart page displays the item
 @pytest.mark.django_db
 def test_cart_detail_page(client, product):
     # cart page are open
@@ -74,8 +76,3 @@ def test_cart_detail_page(client, product):
     assert response.status_code == 200
     assert 'RTX 4070' in response.content.decode()
 
-#Adding an item to the cart
-#Correctly saving the quantity
-#Removing an item from the cart
-#Updating the quantity
-#The cart page displays the item
